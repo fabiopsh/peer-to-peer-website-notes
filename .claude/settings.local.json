@@ -9,7 +9,8 @@
       "Bash(node -e \"const fs=require\\('fs'\\);const path=require\\('path'\\);const dir='src/content/lessons';const set=new Set\\(\\);fs.readdirSync\\(dir\\).forEach\\(f=>{const txt=fs.readFileSync\\(path.join\\(dir,f\\),'utf8'\\);for\\(const m of txt.matchAll\\(/callout-\\(\\\\w+\\)/g\\)\\)set.add\\(m[1]\\)}\\);console.log\\([...set].sort\\(\\)\\)\")",
       "Bash(find /c/Users/fabio -maxdepth 5 -type d -name \"md\" 2>/dev/null)",
       "Bash(cd \"/c/Users/fabio/Documents/UNIPI - Project/peer-to-peer-website-notes/build/md\" && ls -1 *.md | head -10)",
-      "Bash(node --input-type=module -e ' *)"
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(gh api *)"
     ]
   }
 }

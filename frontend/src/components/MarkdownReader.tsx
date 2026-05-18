@@ -49,6 +49,7 @@ export function MarkdownReader({ source }: Props) {
 }
 
 function fixImagePaths(md: string): string {
-  // Standard markdown image syntax with relative "images/..." → "/images/..."
-  return md.replace(/(!\[[^\]]*\]\()(images\/)/g, '$1/$2')
+  // Prepend Vite's BASE_URL so images resolve under /<base>/images/... on GH Pages
+  const base = import.meta.env.BASE_URL  // always ends with '/'
+  return md.replace(/(!\[[^\]]*\]\()(images\/)/g, `$1${base}$2`)
 }

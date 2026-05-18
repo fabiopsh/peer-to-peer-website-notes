@@ -8,8 +8,10 @@ import { LabIndex, LabPage } from '@/routes/LabPage'
 import { ProgressPage } from '@/routes/ProgressPage'
 
 function App() {
+  // Strip trailing slash so basename matches the URL exactly.
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '')
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
