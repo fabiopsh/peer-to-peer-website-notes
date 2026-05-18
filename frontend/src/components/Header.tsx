@@ -19,10 +19,9 @@ export function Header({ onMenuToggle }: Props) {
       <div className="row">
         <button
           type="button"
-          className="icon-btn"
+          className="icon-btn sidebar-menu-btn"
           onClick={onMenuToggle}
           aria-label="Apri menu"
-          style={{ display: 'inline-flex' }}
         >
           ≡
         </button>

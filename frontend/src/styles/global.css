@@ -203,6 +203,11 @@ h4 {
   color: var(--text);
 }
 
+/* Burger: hidden on desktop, shown only on mobile */
+.sidebar-menu-btn {
+  display: none;
+}
+
 /* ---------- Sidebar ---------- */
 .sidebar {
   width: var(--sidebar-width);
@@ -372,6 +377,9 @@ h4 {
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 15;
+  }
+  .sidebar-menu-btn {
+    display: inline-flex;
   }
 }
 
