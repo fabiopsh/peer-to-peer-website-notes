@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>Studio P2P & Blockchain</title>
+    <script type="text/javascript">
+      // SPA fallback for GitHub Pages (rafgraph/spa-github-pages, MIT).
+      // Re-routes any URL to index.html, encoding the original path in the query
+      // string. The decode snippet in index.html restores the real URL.
+      // pathSegmentsToKeep = 1 means "keep one segment" (the repo name).
+      var pathSegmentsToKeep = 1
+      var l = window.location
+      l.replace(
+        l.protocol +
+          '//' +
+          l.hostname +
+          (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
+          '/?/' +
+          l.pathname
+            .slice(1)
+            .split('/')
+            .slice(pathSegmentsToKeep)
+            .join('/')
+            .replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash,
+      )
+    </script>
+  </head>
+  <body></body>
+</html>
