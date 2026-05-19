@@ -100,6 +100,24 @@ export const BADGE_CATALOG: readonly Badge[] = [
     description: 'Hai costruito un albero di Merkle.',
     icon: '🧬',
   },
+  {
+    id: 'bloom-tuner',
+    title: 'Bloom Tuner',
+    description: 'Hai inserito almeno 10 elementi nel Bloom filter lab.',
+    icon: '🔵',
+  },
+  {
+    id: 'tx-builder',
+    title: 'TX Builder',
+    description: 'Hai completato una transazione Bitcoin valida nel lab UTXO.',
+    icon: '₿',
+  },
+  {
+    id: 'crypto-signer',
+    title: 'Crypto Signer',
+    description: 'Hai firmato e verificato un messaggio con ECDSA.',
+    icon: '🔑',
+  },
 ] as const
 
 export const BADGES_BY_ID: Record<string, Badge> = Object.fromEntries(

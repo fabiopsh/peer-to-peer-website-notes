@@ -1,8 +1,60 @@
 import { useEffect, useRef, useState } from 'react'
 import { sha256Hex } from '@/utils/crypto'
 import { useProgress } from '@/hooks/useProgress'
+import { LabShell } from '@/components/LabShell'
 
 type Status = 'idle' | 'mining' | 'found' | 'cancelled'
+
+function PoWTheory() {
+  return (
+    <>
+      <h4>Cos'è la Proof of Work</h4>
+      <p>
+        La <strong>Proof of Work</strong> è un meccanismo per produrre una prova
+        "costosa da generare ma facile da verificare". In Bitcoin serve a due
+        scopi distinti:
+      </p>
+      <ul>
+        <li>
+          <strong>Resistenza Sybil:</strong> creare identità è gratis, ma minare un
+          blocco richiede energia reale — quindi attaccare la rete (50%+1 del
+          potere computazionale) costa miliardi di dollari di hardware ed
+          elettricità.
+        </li>
+        <li>
+          <strong>Ordering decentralizzato:</strong> in assenza di un coordinatore,
+          chi trova per primo un blocco valido "vince" e propone il prossimo
+          stato della catena.
+        </li>
+      </ul>
+
+      <h4>Come funziona</h4>
+      <p>
+        Si vuole un hash del blocco che inizi con un certo numero di zeri:
+      </p>
+      <code className="formula">SHA-256(header ‖ nonce) &lt; target</code>
+      <p>
+        Il miner incrementa il campo <code>nonce</code> (4 byte) finché l'hash
+        risultante non rispetta il vincolo. SHA-256 è imprevedibile: l'unico modo
+        di trovare un nonce valido è provarli uno per uno. Trovato il blocco,
+        chiunque può verificarlo in <strong>una sola operazione di hash</strong>.
+      </p>
+
+      <h4>Difficoltà</h4>
+      <p>
+        L'output di SHA-256 in formato hex è uniforme: ogni cifra hex (4 bit) ha
+        probabilità <code>1/16</code> di essere zero. Quindi richiedere{' '}
+        <code>d</code> zeri iniziali significa che mediamente serviranno:
+      </p>
+      <code className="formula">E[tentativi] = 16^d</code>
+      <p>
+        Bitcoin reale usa un target a 256 bit (non zeri leading hex) e ricalibra
+        la difficoltà ogni 2016 blocchi (~2 settimane) per mantenere un blocco
+        ogni 10 minuti. Questo lab usa una scala semplificata: 1–6 zeri leading.
+      </p>
+    </>
+  )
+}
 
 export function PoWSimulator() {
   const [blockData, setBlockData] = useState('Hello Bitcoin, ciao UniPi!')
@@ -37,8 +89,6 @@ export function PoWSimulator() {
     let lastUiUpdate = 0
     while (!cancelRef.current) {
       const candidate = `${blockData}|${n}`
-      // Compute hash in inline loop; yield to UI every 200 hashes
-      // (SubtleCrypto is async by design, so it inherently yields)
       const h = await sha256Hex(candidate)
       if (h.startsWith(target)) {
         setHash(h)
@@ -53,7 +103,6 @@ export function PoWSimulator() {
         setNonce(n)
         setHash(h)
         lastUiUpdate = n
-        // Give the UI a moment
         await new Promise((r) => setTimeout(r, 0))
       }
     }
@@ -67,16 +116,20 @@ export function PoWSimulator() {
   const hashesPerSec =
     elapsed > 0 ? Math.round((nonce / elapsed) * 1000).toLocaleString() : '0'
 
-  return (
-    <div className="lab">
-      <div className="lab__intro">
-        <h1 className="page-title">Proof of Work simulator</h1>
-        <p className="page-subtitle">
-          Aumenta la difficulty per richiedere più zeri iniziali nell’hash
-          SHA-256. Ogni cifra hex aggiuntiva moltiplica il lavoro medio per ~16.
-        </p>
-      </div>
+  const statusInfo: Record<Status, { icon: string; label: string }> = {
+    mining: { icon: '⛏', label: 'Mining in corso' },
+    found: { icon: '✅', label: 'Blocco trovato' },
+    idle: { icon: '—', label: 'Inattivo' },
+    cancelled: { icon: '✋', label: 'Stoppato' },
+  }
 
+  return (
+    <LabShell
+      title="Proof of Work simulator"
+      subtitle="Aumenta la difficulty per richiedere più zeri iniziali nell'hash SHA-256. Ogni cifra hex aggiuntiva moltiplica il lavoro medio per ~16."
+      lessonSlug="lezione-12"
+      theory={<PoWTheory />}
+    >
       <div className="lab-shell">
         <div className="lab-controls">
           <div className="lab-control" style={{ flex: 1, minWidth: 240 }}>
@@ -85,6 +138,7 @@ export function PoWSimulator() {
               value={blockData}
               onChange={(e) => setBlockData(e.target.value)}
               disabled={status === 'mining'}
+              aria-label="Dati del blocco da minare"
             />
           </div>
           <div className="lab-control">
@@ -96,6 +150,7 @@ export function PoWSimulator() {
               value={difficulty}
               onChange={(e) => setDifficulty(Number(e.target.value))}
               disabled={status === 'mining'}
+              aria-label="Difficolt&agrave;: numero di zeri leading"
             />
             <span className="muted" style={{ fontSize: 12 }}>
               {difficulty} zeri · ~{expected.toLocaleString()} hash attesi
@@ -115,6 +170,17 @@ export function PoWSimulator() {
           </div>
         </div>
 
+        {difficulty >= 5 && status !== 'mining' && (
+          <div className="lab-warning" role="alert">
+            <span aria-hidden="true">⚠</span>
+            <span>
+              Difficulty {difficulty}: attesa media di{' '}
+              <strong>{expected.toLocaleString()}</strong> tentativi.
+              {difficulty >= 6 && ' Può richiedere diversi minuti sul tuo browser.'}
+            </span>
+          </div>
+        )}
+
         <div className="lab-stats">
           <div className="lab-stat">
             <div className="lab-stat__label">Nonce</div>
@@ -133,10 +199,10 @@ export function PoWSimulator() {
           <div className="lab-stat">
             <div className="lab-stat__label">Stato</div>
             <div className="lab-stat__value">
-              {status === 'mining' && '⛏ Mining…'}
-              {status === 'found' && '✅ Trovato!'}
-              {status === 'idle' && '—'}
-              {status === 'cancelled' && '✋ Stoppato'}
+              <span aria-label={statusInfo[status].label} title={statusInfo[status].label}>
+                {statusInfo[status].icon}
+              </span>{' '}
+              <span style={{ fontSize: 13, fontWeight: 500 }}>{statusInfo[status].label}</span>
             </div>
           </div>
         </div>
@@ -170,6 +236,6 @@ export function PoWSimulator() {
           </div>
         )}
       </div>
-    </div>
+    </LabShell>
   )
 }

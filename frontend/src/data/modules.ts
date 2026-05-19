@@ -53,7 +53,7 @@ export const MODULES_BY_ID: Record<ModuleId, ModuleMeta> = Object.fromEntries(
 ) as Record<ModuleId, ModuleMeta>
 
 export type LabMeta = {
-  slug: 'kademlia' | 'hashing' | 'pow' | 'merkle'
+  slug: 'kademlia' | 'hashing' | 'pow' | 'merkle' | 'bloom' | 'utxo' | 'ecdsa'
   title: string
   blurb: string
   lessonSlug: string
@@ -87,6 +87,27 @@ export const LABS: readonly LabMeta[] = [
     blurb:
       'Scegli la difficulty e osserva il mining iterare il nonce finché SHA-256 produce abbastanza zeri.',
     lessonSlug: 'lezione-12',
+  },
+  {
+    slug: 'bloom',
+    title: 'Bloom Filter',
+    blurb:
+      "Aggiungi elementi, testa l'appartenenza e osserva i falsi positivi crescere con l'occupancy.",
+    lessonSlug: 'lezione-15',
+  },
+  {
+    slug: 'utxo',
+    title: 'UTXO & Transaction Builder',
+    blurb:
+      'Componi una transazione Bitcoin selezionando UTXO come input e creando output con fee live.',
+    lessonSlug: 'lezione-11',
+  },
+  {
+    slug: 'ecdsa',
+    title: 'ECDSA Signature',
+    blurb:
+      'Genera una keypair su curva ellittica didattica, firma un messaggio, verifica e prova a manomettere.',
+    lessonSlug: 'lezione-06',
   },
 ] as const
 

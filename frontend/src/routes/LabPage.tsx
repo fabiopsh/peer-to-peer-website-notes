@@ -5,6 +5,9 @@ import { KademliaXOR } from '@/labs/KademliaXOR'
 import { ConsistentHashing } from '@/labs/ConsistentHashing'
 import { PoWSimulator } from '@/labs/PoWSimulator'
 import { MerkleTreeLab } from '@/labs/MerkleTree'
+import { BloomFilter } from '@/labs/BloomFilter'
+import { UTXOBuilder } from '@/labs/UTXOBuilder'
+import { ECDSASign } from '@/labs/ECDSASign'
 
 export function LabIndex() {
   return (
@@ -48,6 +51,12 @@ export function LabPage() {
       return <PoWSimulator />
     case 'merkle':
       return <MerkleTreeLab />
+    case 'bloom':
+      return <BloomFilter />
+    case 'utxo':
+      return <UTXOBuilder />
+    case 'ecdsa':
+      return <ECDSASign />
     default:
       return <Navigate to="/lab" replace />
   }

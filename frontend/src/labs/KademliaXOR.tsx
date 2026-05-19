@@ -9,8 +9,58 @@ import {
   xorDistance,
 } from '@/utils/xor'
 import { useProgress } from '@/hooks/useProgress'
+import { LabShell } from '@/components/LabShell'
 
 const NETWORK = randomIds(8, 42)
+
+function KademliaTheory() {
+  return (
+    <>
+      <h4>Cos'è una DHT</h4>
+      <p>
+        Una <strong>Distributed Hash Table</strong> distribuisce coppie chiave-valore
+        su una rete P2P, in modo che ogni nodo sia responsabile di un sottoinsieme
+        di chiavi e possa risolvere lookup remoti con pochi hop (logaritmici nel
+        numero di nodi).
+      </p>
+
+      <h4>Perché XOR come metrica</h4>
+      <p>
+        Kademlia identifica nodi e chiavi con interi a 160 bit e definisce la
+        distanza fra due ID come il loro <code>XOR</code> bit a bit. Lo XOR è una
+        metrica <strong>simmetrica</strong> (d(a,b) = d(b,a)) e{' '}
+        <strong>unidirezionale</strong> (a partire da un nodo verso un target esiste
+        una sola direzione "in discesa"). Questo rende il routing deterministico e
+        consente a chi risponde di apprendere informazioni utili da chi gli ha
+        scritto.
+      </p>
+      <code className="formula">distanza(A, B) = A ⊕ B (interpretato come intero)</code>
+
+      <h4>k-bucket</h4>
+      <p>
+        Ogni nodo mantiene tabelle di routing chiamate <strong>k-bucket</strong>:
+        per ogni distanza <code>2^i ≤ d &lt; 2^(i+1)</code> tiene fino a{' '}
+        <code>k</code> contatti (tipicamente k=20). Più un nodo è lontano, meno
+        contatti servono — la rete è "fitta" vicino a noi e "rada" lontano.
+      </p>
+
+      <h4>Greedy lookup</h4>
+      <p>
+        Per trovare il nodo responsabile di una chiave target:
+      </p>
+      <ol>
+        <li>Si parte da sé stessi.</li>
+        <li>Si chiede ai contatti più vicini al target di restituire i loro contatti più vicini al target.</li>
+        <li>Ad ogni hop la distanza minima diminuisce strettamente (almeno un bit di prefisso comune in più).</li>
+        <li>Si ferma quando nessuno conosce un nodo più vicino → quello attuale è il responsabile.</li>
+      </ol>
+      <p>
+        Nel laboratorio sotto la simulazione è semplificata: hai una rete di 8 nodi
+        precaricati e a ogni step prendi quello a XOR minimo verso il target.
+      </p>
+    </>
+  )
+}
 
 export function KademliaXOR() {
   const [aRaw, setARaw] = useState('10110100')
@@ -33,16 +83,12 @@ export function KademliaXOR() {
   }
 
   return (
-    <div className="lab">
-      <div className="lab__intro">
-        <h1 className="page-title">Kademlia · distanza XOR</h1>
-        <p className="page-subtitle">
-          Inserisci due identificatori (binario o decimale 0–255) per
-          calcolare la distanza XOR e simulare il lookup iterativo verso il
-          target.
-        </p>
-      </div>
-
+    <LabShell
+      title="Kademlia · distanza XOR"
+      subtitle="Inserisci due identificatori (binario o decimale 0–255) per calcolare la distanza XOR e simulare il lookup iterativo verso il target."
+      lessonSlug="lezione-04"
+      theory={<KademliaTheory />}
+    >
       <div className="lab-shell">
         <div className="lab-controls">
           <div className="lab-control">
@@ -51,6 +97,7 @@ export function KademliaXOR() {
               value={aRaw}
               onChange={(e) => setARaw(e.target.value)}
               placeholder="es: 10110100 o 180"
+              aria-label="Nodo sorgente"
             />
           </div>
           <div className="lab-control">
@@ -59,6 +106,7 @@ export function KademliaXOR() {
               value={bRaw}
               onChange={(e) => setBRaw(e.target.value)}
               placeholder="es: 00011010 o 26"
+              aria-label="Nodo target o chiave"
             />
           </div>
           <div className="lab-control" style={{ justifyContent: 'flex-end' }}>
@@ -188,6 +236,6 @@ export function KademliaXOR() {
           </div>
         </div>
       )}
-    </div>
+    </LabShell>
   )
 }

@@ -39,8 +39,11 @@ const MODULE_MAP = {
 const LAB_FOR_LESSON = {
   3: 'hashing',
   4: 'kademlia',
+  6: 'ecdsa',
   7: 'merkle',
+  11: 'utxo',
   12: 'pow',
+  15: 'bloom',
 }
 
 // --- Helpers -------------------------------------------------------------
@@ -233,7 +236,7 @@ function renderManifest(entries) {
 
 export type LessonKind = 'lezione' | 'progetto'
 export type ModuleId = 'p2p-dht' | 'bitcoin' | 'ethereum' | 'apps'
-export type LabSlug = 'kademlia' | 'hashing' | 'pow' | 'merkle'
+export type LabSlug = 'kademlia' | 'hashing' | 'pow' | 'merkle' | 'bloom' | 'utxo' | 'ecdsa'
 
 export type LessonMeta = {
   slug: string
